@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeScript 学习指南</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css">
+</head>
+
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>TypeScript 学习</h2>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#basic-types" class="active">基础类型</a></li>
+            <li><a href="#interfaces-types">接口和类型</a></li>
+            <li><a href="#generics">泛型</a></li>
+            <li><a href="#decorators">装饰器</a></li>
+            <li><a href="#interface-vs-type">Interface vs Type</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <section id="basic-types" class="section">
+            <h1>基础类型</h1>
+            <div class="code-example">
+                <h3>数字、字符串和布尔值</h3>
+                <pre><code class="language-typescript">
+// 基础类型示例
+const numberType: number = 42;
+const stringType: string = "TypeScript";
+const booleanType: boolean = true;
+
+// 数组
+const numberArray: number[] = [1, 2, 3];
+const stringArray: Array<string> = ["TypeScript", "JavaScript"];
+
+// 元组
+const tuple: [string, number] = ["age", 25];
+
+// 枚举
+enum Direction {
+    Up = "UP",
+    Down = "DOWN",
+    Left = "LEFT",
+    Right = "RIGHT"
+}
+                </code></pre>
+            </div>
+        </section>
+
+        <section id="interfaces-types" class="section">
+            <h1>接口和类型</h1>
+            <div class="code-example">
+                <h3>接口定义</h3>
+                <pre><code class="language-typescript">
+interface User {
+    id: number;
+    name: string;
+    age: number;
+    email?: string;     // 可选属性
+    readonly createdAt: Date;  // 只读属性
+}
+
+// 接口继承
+interface Employee extends User {
+    salary: number;
+    department: string;
+}
+                </code></pre>
+            </div>
+        </section>
+
+        <section id="generics" class="section">
+            <h1>泛型</h1>
+            <div class="code-example">
+                <h3>泛型基础</h3>
+                <pre><code class="language-typescript">
+// 泛型函数
+function identity<T>(arg: T): T {
+    return arg;
+}
+
+// 泛型接口
+interface GenericResponse<T> {
+    data: T;
+    status: number;
+    message: string;
+}
+
+// 泛型类
+class GenericBox<T> {
+    private content: T;
+
+    constructor(value: T) {
+        this.content = value;
+    }
+
+    getValue(): T {
+        return this.content;
+    }
+}
+                </code></pre>
+            </div>
+        </section>
+
+        <section id="decorators" class="section">
+            <h1>装饰器</h1>
+            <div class="code-example">
+                <h3>类装饰器示例</h3>
+                <pre><code class="language-typescript">
+function Logger(logString: string) {
+    return function(constructor: Function) {
+        console.log(logString);
+        console.log(constructor);
+    };
+}
+
+@Logger("创建产品...")
+class Product {
+    constructor(
+        private title: string,
+        private price: number
+    ) {}
+}
+                </code></pre>
+            </div>
+        </section>
+
+        <section id="interface-vs-type" class="section">
+            <h1>Interface vs Type</h1>
+            <div class="code-example">
+                <h3>区别示例</h3>
+                <pre><code class="language-typescript">
+// Interface 可以被合并
+interface Animal {
+    name: string;
+}
+interface Animal {
+    age: number;
+}
+
+// Type 不能被合并
+type Dog = {
+    name: string;
+}
+// Error: Duplicate identifier 'Dog'
+// type Dog = {
+//     age: number;
+// }
+
+// Interface 使用 extends
+interface Employee extends User {
+    salary: number;
+}
+
+// Type 使用交叉类型
+type Worker = User & {
+    salary: number;
+}
+                </code></pre>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-typescript.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
