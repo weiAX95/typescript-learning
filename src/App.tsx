@@ -3,10 +3,9 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { Suspense } from 'react';
 import Layout from './components/Layout';
 import { ErrorBoundary } from './components/ErrorBoundary.tsx';
-import BasicTypes from './pages/BasicTypes';
-import TypeQuiz from './pages/TypeQuiz';
-import { NotFound } from './pages/NotFound';
 import { LoadingSpinner } from './components/LoadingSpinner';
+import { NotFound } from './pages/NotFound';
+import { routes } from './routes';
 
 function App() {
     return (
@@ -16,8 +15,13 @@ function App() {
                     <ErrorBoundary>
                         <Suspense fallback={<LoadingSpinner />}>
                             <Routes>
-                                <Route path="/" element={<BasicTypes />} />
-                                <Route path="/quiz" element={<TypeQuiz />} />
+                                {routes.map(route => (
+                                    <Route
+                                        key={route.path}
+                                        path={route.path}
+                                        element={route.element}
+                                    />
+                                ))}
                                 <Route path="*" element={<NotFound />} />
                             </Routes>
                         </Suspense>

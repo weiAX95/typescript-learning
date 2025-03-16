@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+
 :root {
     --background: theme('colors.slate.900');
     --text: theme('colors.white');
@@ -19,6 +21,29 @@
 @layer base {
     body {
         @apply bg-[var(--background)] text-[var(--text)] transition-colors duration-200;
+    }
+
+    /* 自定义滚动条样式 */
+    .code-editor {
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent;
+    }
+
+    .code-editor::-webkit-scrollbar {
+        @apply w-2 h-2;
+    }
+
+    .code-editor::-webkit-scrollbar-track {
+        @apply bg-transparent;
+    }
+
+    .code-editor::-webkit-scrollbar-thumb {
+        @apply rounded;
+        background-color: var(--border);
+    }
+
+    .code-editor::-webkit-scrollbar-corner {
+        @apply bg-transparent;
     }
 }
 
@@ -39,15 +64,34 @@
 
     /* 代码编辑器样式 */
     .code-editor {
-        @apply font-mono text-sm;
+        @apply overflow-auto;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 14px;
+        line-height: 1.6;
+        tab-size: 2;
+        -moz-tab-size: 2;
+    }
+
+    .code-editor textarea,
+    .code-editor pre {
+        @apply leading-relaxed;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 14px;
+        line-height: 1.6;
+        tab-size: 2;
+        -moz-tab-size: 2;
     }
 
     /* 语法高亮主题 */
+    .token {
+        font-family: 'JetBrains Mono', monospace;
+    }
+
     .token.comment,
     .token.prolog,
     .token.doctype,
     .token.cdata {
-        @apply text-gray-500;
+        @apply text-gray-500 italic;
     }
 
     .token.punctuation {
@@ -82,34 +126,18 @@
     .token.atrule,
     .token.attr-value,
     .token.keyword {
-        @apply text-blue-400;
+        @apply text-blue-400 font-medium;
     }
 
     .token.function,
     .token.class-name {
-        @apply text-purple-400;
+        @apply text-purple-400 font-medium;
     }
 
     .token.regex,
     .token.important,
     .token.variable {
         @apply text-orange-400;
-    }
-
-    /* 编辑器滚动条样式 */
-    .code-editor::-webkit-scrollbar,
-    #syntax-highlight::-webkit-scrollbar {
-        @apply w-2;
-    }
-
-    .code-editor::-webkit-scrollbar-track,
-    #syntax-highlight::-webkit-scrollbar-track {
-        @apply bg-transparent;
-    }
-
-    .code-editor::-webkit-scrollbar-thumb,
-    #syntax-highlight::-webkit-scrollbar-thumb {
-        @apply bg-gray-700 rounded hover:bg-gray-600;
     }
 
     /* 动画效果 */

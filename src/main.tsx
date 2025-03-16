@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import './styles/base.css';
+import { LoadingSpinner } from './components/LoadingSpinner';
 import 'prismjs/themes/prism-tomorrow.css';
-import 'prismjs/components/prism-typescript';
+import './styles/base.css';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
-        <App />
-    </React.StrictMode>,
+        <Suspense fallback={<LoadingSpinner />}>
+            <App />
+        </Suspense>
+    </React.StrictMode>
 );

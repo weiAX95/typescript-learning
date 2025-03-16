@@ -1,92 +1,151 @@
-import { useEffect } from 'react';
-import Prism from 'prismjs';
+import { AnimatedTabs } from '../components/AnimatedTabs';
+import { CopyableCode } from '../components/CopyableCode';
 
-const Interfaces = () => {
-    useEffect(() => {
-        Prism.highlightAll();
-    }, []);
-
-    const interfacesExample = `// 基本接口定义
-interface User {
-    id: number;
+const tabs = [
+    {
+        id: 'interfaces',
+        title: '接口',
+        content: (
+            <div className="space-y-4">
+                <h2 className="text-2xl font-bold text-ts-blue">接口（Interface）</h2>
+                <p>
+                    接口是 TypeScript 中一个强大的特性，它可以定义对象的结构和约束。
+                </p>
+                <CopyableCode
+                    code={`
+interface Person {
     name: string;
     age: number;
-    email?: string;          // 可选属性
-    readonly createdAt: Date; // 只读属性
+    greet(): void;
+}
+
+class Student implements Person {
+    constructor(
+        public name: string,
+        public age: number
+    ) {}
+
+    greet() {
+        console.log(\`Hello, I'm \${this.name}\`);
+    }
 }
 
 // 接口继承
-interface Employee extends User {
+interface Employee extends Person {
     salary: number;
     department: string;
 }
 
-// 函数类型接口
-interface MathOperation {
-    (x: number, y: number): number;
+// 可选属性
+interface Config {
+    color?: string;
+    width?: number;
 }
 
-const add: MathOperation = (x, y) => x + y;
-const multiply: MathOperation = (x, y) => x * y;
+// 只读属性
+interface Point {
+    readonly x: number;
+    readonly y: number;
+}
+`}
+                />
+            </div>
+        )
+    },
+    {
+        id: 'type-aliases',
+        title: '类型别名',
+        content: (
+            <div className="space-y-4">
+                <h2 className="text-2xl font-bold text-ts-blue">类型别名（Type Aliases）</h2>
+                <p>
+                    类型别名用于为类型创建一个新的名称。它可以为任何类型定义别名，包括原始类型、联合类型、交叉类型等。
+                </p>
+                <CopyableCode
+                    code={`
+// 基本类型别名
+type Age = number;
+type Point = { x: number; y: number };
 
-// 索引类型
-interface StringArray {
-    [index: number]: string;
+// 联合类型
+type Status = 'pending' | 'success' | 'error';
+
+// 交叉类型
+type Admin = Person & {
+    privileges: string[];
+};
+
+// 泛型类型别名
+type Container<T> = { value: T };
+
+// 条件类型
+type TypeName<T> = 
+    T extends string ? 'string' :
+    T extends number ? 'number' :
+    T extends boolean ? 'boolean' :
+    'object';
+`}
+                />
+            </div>
+        )
+    },
+    {
+        id: 'interface-vs-type',
+        title: '接口 vs 类型别名',
+        content: (
+            <div className="space-y-4">
+                <h2 className="text-2xl font-bold text-ts-blue">接口 vs 类型别名的区别</h2>
+                <p>
+                    虽然接口和类型别名有很多相似之处，但它们也有一些重要的区别。
+                </p>
+                <CopyableCode
+                    code={`
+// 接口声明合并
+interface Box {
+    height: number;
+}
+interface Box {
+    width: number;
+}
+// 相当于：
+// interface Box {
+//     height: number;
+//     width: number;
+// }
+
+// 类型别名不能合并
+type Box = {
+    height: number;
+}
+// Error: Duplicate identifier 'Box'
+type Box = {
+    width: number;
 }
 
-let myArray: StringArray = ["Bob", "Fred"];
-
-// 类实现接口
-interface Animal {
+// 接口只能描述对象类型
+interface User {
     name: string;
-    makeSound(): void;
 }
 
-class Dog implements Animal {
-    name: string;
-    
-    constructor(name: string) {
-        this.name = name;
+// 类型别名可以描述任何类型
+type StringOrNumber = string | number;
+type Text = string;
+type Callback = (data: string) => void;
+`}
+                />
+            </div>
+        )
     }
+];
 
-    makeSound() {
-        console.log("Woof!");
-    }
-}`;
-
+const Interfaces = () => {
     return (
         <div className="space-y-8">
-            <h1 className="ts-heading">TypeScript 接口</h1>
-
-            <div className="space-y-6">
-                <section className="ts-card">
-                    <h2 className="mb-4 text-2xl font-bold text-ts-blue">接口概述</h2>
-                    <p className="text-gray-300">
-                        接口是 TypeScript 中最基本的类型定义方式之一，用于定义对象的形状和契约。
-                        通过接口，我们可以定义类必须遵循的规则，实现更好的代码组织和类型安全。
-                    </p>
-                </section>
-
-                <section className="ts-card">
-                    <h2 className="mb-4 text-2xl font-bold text-ts-blue">代码示例</h2>
-                    <div className="ts-code-block">
-                        <pre>
-                            <code className="language-typescript">{interfacesExample}</code>
-                        </pre>
-                    </div>
-                </section>
-
-                <section className="ts-card">
-                    <h2 className="mb-4 text-2xl font-bold text-ts-blue">使用场景</h2>
-                    <ul className="space-y-2 text-gray-300 list-disc list-inside">
-                        <li>定义对象的结构和类型</li>
-                        <li>实现面向对象编程中的抽象</li>
-                        <li>定义函数类型</li>
-                        <li>定义可索引类型</li>
-                        <li>通过继承扩展现有接口</li>
-                    </ul>
-                </section>
-            </div>
+            <h1 className="ts-heading">接口 & 类型别名</h1>
+            <p className="text-lg">
+                接口和类型别名是 TypeScript 中定义类型的两种主要方式。本章节将介绍它们的用法和区别。
+            </p>
+            <AnimatedTabs tabs={tabs} />
         </div>
     );
 };

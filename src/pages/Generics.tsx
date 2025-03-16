@@ -1,116 +1,150 @@
-import { useEffect } from 'react';
-import Prism from 'prismjs';
+import { AnimatedTabs } from '../components/AnimatedTabs';
+import { CopyableCode } from '../components/CopyableCode';
 
-const Generics = () => {
-    useEffect(() => {
-        Prism.highlightAll();
-    }, []);
-
-    const genericsExample = `// 基础泛型函数
+const tabs = [
+    {
+        id: 'basic-generics',
+        title: '基础泛型',
+        content: (
+            <div className="space-y-4">
+                <h2 className="text-2xl font-bold text-ts-blue">基础泛型（Basic Generics）</h2>
+                <p>
+                    泛型允许我们在定义函数、接口或类时，不预先指定具体的类型，而在使用时再指定类型的一种特性。
+                </p>
+                <CopyableCode
+                    code={`
+// 泛型函数
 function identity<T>(arg: T): T {
     return arg;
 }
 
+// 使用泛型函数
 let output = identity<string>("myString");
-let inferredOutput = identity(42); // 类型推断为 number
+let output2 = identity(123);  // 类型推断
 
 // 泛型接口
-interface GenericResponse<T> {
-    data: T;
-    status: number;
-    message: string;
+interface Container<T> {
+    value: T;
+    getValue(): T;
 }
 
-// 使用泛型接口
-interface User {
-    id: number;
-    name: string;
-}
-
-const response: GenericResponse<User> = {
-    data: { id: 1, name: "张三" },
-    status: 200,
-    message: "成功"
-};
-
-// 泛型类
-class GenericBox<T> {
-    private content: T;
-
-    constructor(value: T) {
-        this.content = value;
-    }
-
-    getValue(): T {
-        return this.content;
+// 实现泛型接口
+class NumberContainer implements Container<number> {
+    constructor(public value: number) {}
+    
+    getValue(): number {
+        return this.value;
     }
 }
-
-// 泛型约束
+`}
+                />
+            </div>
+        )
+    },
+    {
+        id: 'generic-constraints',
+        title: '泛型约束',
+        content: (
+            <div className="space-y-4">
+                <h2 className="text-2xl font-bold text-ts-blue">泛型约束（Generic Constraints）</h2>
+                <p>
+                    有时我们希望限制泛型可以代表的类型范围，这时可以使用泛型约束。
+                </p>
+                <CopyableCode
+                    code={`
+// 定义一个约束接口
 interface Lengthwise {
     length: number;
 }
 
-function logLength<T extends Lengthwise>(arg: T): number {
-    return arg.length;
+// 使用约束
+function logLength<T extends Lengthwise>(arg: T): void {
+    console.log(arg.length);
 }
 
-// 正确：字符串有 length 属性
-logLength("Hello");
-// 正确：数组有 length 属性
-logLength([1, 2, 3]);
-// 错误：数字没有 length 属性
-// logLength(123);
+logLength("Hello");     // OK
+logLength([1, 2, 3]);  // OK
+logLength({ length: 10 }); // OK
+// logLength(3);  // Error: number doesn't have a length property
 
-// 泛型工具类型
-interface Todo {
-    title: string;
-    description: string;
-    completed: boolean;
+// 在泛型约束中使用类型参数
+function getProperty<T, K extends keyof T>(obj: T, key: K) {
+    return obj[key];
 }
 
-// Partial - 使所有属性可选
-type PartialTodo = Partial<Todo>;
+let x = { a: 1, b: 2, c: 3 };
+getProperty(x, "a"); // OK
+// getProperty(x, "d"); // Error: "d" is not in "a" | "b" | "c"
+`}
+                />
+            </div>
+        )
+    },
+    {
+        id: 'generic-classes',
+        title: '泛型类',
+        content: (
+            <div className="space-y-4">
+                <h2 className="text-2xl font-bold text-ts-blue">泛型类（Generic Classes）</h2>
+                <p>
+                    泛型类使得类可以支持多种数据类型，增加了代码的复用性。
+                </p>
+                <CopyableCode
+                    code={`
+// 泛型类
+class Queue<T> {
+    private data: T[] = [];
+    
+    push(item: T) {
+        this.data.push(item);
+    }
+    
+    pop(): T | undefined {
+        return this.data.shift();
+    }
 
-// Pick - 选择特定属性
-type TodoPreview = Pick<Todo, "title" | "completed">;
+    peek(): T | undefined {
+        return this.data[0];
+    }
+}
 
-// Record - 创建键值对类型
-type TodoRecord = Record<string, Todo>;`;
+// 使用泛型类
+const numberQueue = new Queue<number>();
+numberQueue.push(1);
+numberQueue.push(2);
+console.log(numberQueue.pop()); // 1
 
+const stringQueue = new Queue<string>();
+stringQueue.push("Hello");
+stringQueue.push("TypeScript");
+console.log(stringQueue.peek()); // "Hello"
+
+// 带约束的泛型类
+class KeyValuePair<K extends string | number, V> {
+    constructor(public key: K, public value: V) {}
+    
+    toString() {
+        return \`\${this.key}: \${this.value}\`;
+    }
+}
+
+const pair1 = new KeyValuePair("name", "TypeScript");
+const pair2 = new KeyValuePair(1, true);
+`}
+                />
+            </div>
+        )
+    }
+];
+
+const Generics = () => {
     return (
         <div className="space-y-8">
-            <h1 className="ts-heading">TypeScript 泛型</h1>
-
-            <div className="space-y-6">
-                <section className="ts-card">
-                    <h2 className="mb-4 text-2xl font-bold text-ts-blue">泛型概述</h2>
-                    <p className="text-gray-300">
-                        泛型是 TypeScript 中最强大的特性之一，它允许我们编写可重用的、类型安全的代码。
-                        通过泛型，我们可以创建适用于多种类型的组件，同时保持类型检查的优势。
-                    </p>
-                </section>
-
-                <section className="ts-card">
-                    <h2 className="mb-4 text-2xl font-bold text-ts-blue">代码示例</h2>
-                    <div className="ts-code-block">
-                        <pre>
-                            <code className="language-typescript">{genericsExample}</code>
-                        </pre>
-                    </div>
-                </section>
-
-                <section className="ts-card">
-                    <h2 className="mb-4 text-2xl font-bold text-ts-blue">泛型的优势</h2>
-                    <ul className="space-y-2 text-gray-300 list-disc list-inside">
-                        <li>代码重用：一次编写，适用于多种类型</li>
-                        <li>类型安全：在编译时进行类型检查</li>
-                        <li>灵活性：可以适应不同的数据类型和结构</li>
-                        <li>可读性：通过类型参数清晰地表达意图</li>
-                        <li>维护性：泛型约束帮助限制类型范围</li>
-                    </ul>
-                </section>
-            </div>
+            <h1 className="ts-heading">泛型</h1>
+            <p className="text-lg">
+                泛型是 TypeScript 中最强大的特性之一，它可以让我们的代码支持多种数据类型，同时保持类型安全。
+            </p>
+            <AnimatedTabs tabs={tabs} />
         </div>
     );
 };

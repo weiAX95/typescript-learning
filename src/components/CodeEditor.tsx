@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Prism from 'prismjs';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/themes/prism-tomorrow.css';
 import { motion } from 'framer-motion';
 import { LoadingSpinner } from './LoadingSpinner';
 import { useTheme } from '../contexts/ThemeContext';
@@ -27,19 +29,23 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     const preRef = useRef<HTMLPreElement>(null);
 
     useEffect(() => {
-        if (editorRef.current) {
-            const highlight = () => {
-                const code = editorRef.current?.value || '';
-                const grammar = Prism.languages[language];
-                const highlightedCode = Prism.highlight(code, grammar, language);
-                const preElement = preRef.current;
-                if (preElement) {
-                    preElement.innerHTML = highlightedCode;
+        const highlightCode = () => {
+            if (editorRef.current && preRef.current) {
+                try {
+                    const code = editorRef.current.value;
+                    const highlightedCode = Prism.highlight(
+                        code,
+                        Prism.languages.typescript,
+                        'typescript'
+                    );
+                    preRef.current.innerHTML = `<code class="language-${language}">${highlightedCode}</code>`;
+                } catch (error) {
+                    console.error('Highlighting error:', error);
                 }
-            };
+            }
+        };
 
-            highlight();
-        }
+        highlightCode();
     }, [value, language]);
 
     const handleFormat = async () => {
@@ -60,8 +66,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             onChange(formatted);
             setOutput('代码格式化成功！');
         } catch (error) {
-            setOutput(`格式化错误: ${error instanceof Error ? error.message : '未知错误'}`);
             console.error('Format error:', error);
+            setOutput(`格式化错误: ${error instanceof Error ? error.message : '未知错误'}`);
         } finally {
             setIsFormatting(false);
         }
@@ -109,32 +115,23 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
                 </div>
             )}
             <div className="p-4 space-y-4">
-                <div className="relative rounded-lg border border-[var(--border)]">
-                    <div className="absolute inset-0 overflow-hidden">
+                <div className={`relative rounded-lg border border-[var(--border)] h-48 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} overflow-hidden`}>
+                    <div className="relative h-full">
+                        <textarea
+                            ref={editorRef}
+                            value={value}
+                            onChange={(e) => onChange(e.target.value)}
+                            onScroll={handleScroll}
+                            className={`absolute inset-0 w-full h-full p-4 resize-none focus:outline-none code-editor ${theme === 'dark' ? 'text-gray-300' : 'text-gray-900'}`}
+                            spellCheck="false"
+                            disabled={isLoading}
+                        />
                         <pre
                             ref={preRef}
-                            className={`w-full h-full p-4 m-0 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-900'
-                                } code-editor pointer-events-none whitespace-pre overflow-auto`}
+                            className={`absolute inset-0 p-4 m-0 pointer-events-none code-editor whitespace-pre ${theme === 'dark' ? 'text-gray-300' : 'text-gray-900'}`}
                             aria-hidden="true"
-                        >
-                            <code className={`language-${language} ${theme === 'dark' ? 'dark' : 'light'}`} />
-                        </pre>
+                        />
                     </div>
-                    <textarea
-                        ref={editorRef}
-                        value={value}
-                        onChange={(e) => onChange(e.target.value)}
-                        onScroll={handleScroll}
-                        className={`w-full h-48 p-4 code-editor ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
-                            } resize-none focus:outline-none focus:ring-2 focus:ring-ts-blue relative z-[1] overflow-auto`}
-                        style={{
-                            background: 'transparent',
-                            color: 'transparent',
-                            caretColor: theme === 'dark' ? '#fff' : '#000'
-                        }}
-                        spellCheck="false"
-                        disabled={isLoading}
-                    />
                 </div>
                 <div className="flex space-x-4">
                     <motion.button
