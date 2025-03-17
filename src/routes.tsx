@@ -6,6 +6,7 @@ const Interfaces = lazy(() => import('./pages/Interfaces'));
 const Generics = lazy(() => import('./pages/Generics'));
 const Decorators = lazy(() => import('./pages/Decorators'));
 const TypeQuiz = lazy(() => import('./pages/TypeQuiz'));
+const TypeChallenges = lazy(() => import('./pages/TypeChallenges'));
 
 export const routes = [
     {
@@ -27,6 +28,11 @@ export const routes = [
         path: '/advanced-types',
         element: <AdvancedTypes />,
         label: '高级类型'
+    },
+    {
+        path: '/type-challenges',
+        element: <TypeChallenges />,
+        label: '类型体操'
     },
     {
         path: '/decorators',

@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-typescript';
 import 'prismjs/themes/prism-tomorrow.css';
-import { motion } from 'framer-motion';
 import { LoadingSpinner } from './LoadingSpinner';
 import { useTheme } from '../contexts/ThemeContext';
 import prettier from 'prettier/standalone';
@@ -101,75 +100,58 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     const isLoading = isRunning || isFormatting;
 
     return (
-        <motion.div
-            className={`rounded-lg overflow-hidden shadow-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-                } relative border border-[var(--border)]`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-        >
+        <div className="relative">
             {isLoading && (
-                <div className={`absolute inset-0 ${theme === 'dark' ? 'bg-gray-900/50' : 'bg-gray-50/50'
-                    } backdrop-blur-sm z-10 flex items-center justify-center`}>
+                <div className="absolute inset-0 z-10 flex items-center justify-center bg-gray-900/20 backdrop-blur-sm dark:bg-gray-900/50">
                     <LoadingSpinner />
                 </div>
             )}
-            <div className="p-4 space-y-4">
-                <div className={`relative rounded-lg border border-[var(--border)] h-48 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} overflow-hidden`}>
+            <div className="space-y-4">
+                <div className={`relative h-48 overflow-hidden rounded-lg border border-[var(--border)] code-editor ${theme === 'dark' ? 'bg-[#1e1e1e]' : 'bg-gray-50'
+                    }`}>
                     <div className="relative h-full">
                         <textarea
                             ref={editorRef}
                             value={value}
                             onChange={(e) => onChange(e.target.value)}
                             onScroll={handleScroll}
-                            className={`absolute inset-0 w-full h-full p-4 resize-none focus:outline-none code-editor ${theme === 'dark' ? 'text-gray-300' : 'text-gray-900'}`}
+                            className={`absolute inset-0 w-full h-full p-4 resize-none focus:outline-none code-editor caret-current text-transparent`}
                             spellCheck="false"
                             disabled={isLoading}
                         />
                         <pre
                             ref={preRef}
-                            className={`absolute inset-0 p-4 m-0 pointer-events-none code-editor whitespace-pre ${theme === 'dark' ? 'text-gray-300' : 'text-gray-900'}`}
+                            className="absolute inset-0 p-4 m-0 whitespace-pre pointer-events-none code-editor"
                             aria-hidden="true"
                         />
                     </div>
                 </div>
-                <div className="flex space-x-4">
-                    <motion.button
-                        className="ts-button flex-1"
+                <div className="flex items-center gap-2">
+                    <button
+                        className="flex-1 ts-button"
                         onClick={handleFormat}
                         disabled={isLoading}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
                     >
                         {isFormatting ? '格式化中...' : '格式化代码'}
-                    </motion.button>
+                    </button>
                     {onRun && (
-                        <motion.button
-                            className="ts-button flex-1"
+                        <button
+                            className="flex-1 ts-button"
                             onClick={handleRun}
                             disabled={isLoading}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
                         >
                             {isRunning ? '运行中...' : '运行代码'}
-                        </motion.button>
+                        </button>
                     )}
                 </div>
             </div>
             {output && (
-                <motion.div
-                    className={`p-4 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'
-                        } border-t border-[var(--border)]`}
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    transition={{ duration: 0.3 }}
-                >
-                    <h3 className={`text-sm font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                        } mb-2`}>输出:</h3>
-                    <pre className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-900'
-                        } font-mono whitespace-pre-wrap break-all`}>{output}</pre>
-                </motion.div>
+                <div className={`mt-4 p-4 rounded-lg code-editor ${theme === 'dark' ? 'bg-[#1e1e1e]' : 'bg-gray-50'} border border-[var(--border)]`}>
+                    <div className="mb-2 text-sm font-medium text-gray-400">输出:</div>
+                    <pre className={`font-mono text-sm break-all whitespace-pre-wrap ${theme === 'dark' ? 'text-gray-300' : 'text-gray-800'
+                        }`}>{output}</pre>
+                </div>
             )}
-        </motion.div>
+        </div>
     );
 };
